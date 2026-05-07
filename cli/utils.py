@@ -22,7 +22,8 @@ def get_ticker() -> str:
     """Prompt the user to enter a ticker symbol."""
     ticker = questionary.text(
         f"Enter the exact ticker symbol to analyze ({TICKER_INPUT_EXAMPLES}):",
-        validate=lambda x: len(x.strip()) > 0 or "Please enter a valid ticker symbol.",
+        validate=lambda x: len(
+            x.strip()) > 0 or "Please enter a valid ticker symbol.",
         style=questionary.Style(
             [
                 ("text", "fg:green"),
@@ -84,7 +85,8 @@ def select_analysts() -> List[AnalystType]:
             questionary.Choice(display, value=value) for display, value in ANALYST_ORDER
         ],
         instruction="\n- Press Space to select/unselect analysts\n- Press 'a' to select/unselect all\n- Press Enter when done",
-        validate=lambda x: len(x) > 0 or "You must select at least one analyst.",
+        validate=lambda x: len(
+            x) > 0 or "You must select at least one analyst.",
         style=questionary.Style(
             [
                 ("checkbox-selected", "fg:green"),
@@ -143,7 +145,8 @@ def _fetch_openrouter_models() -> List[Tuple[str, str]]:
         models = resp.json().get("data", [])
         return [(m.get("name") or m["id"], m["id"]) for m in models]
     except Exception as e:
-        console.print(f"\n[yellow]Could not fetch OpenRouter models: {e}[/yellow]")
+        console.print(
+            f"\n[yellow]Could not fetch OpenRouter models: {e}[/yellow]")
         return []
 
 
@@ -168,7 +171,8 @@ def select_openrouter_model() -> str:
     if choice is None or choice == "custom":
         return questionary.text(
             "Enter OpenRouter model ID (e.g. google/gemma-4-26b-a4b-it):",
-            validate=lambda x: len(x.strip()) > 0 or "Please enter a model ID.",
+            validate=lambda x: len(
+                x.strip()) > 0 or "Please enter a model ID.",
         ).ask().strip()
 
     return choice
@@ -190,7 +194,8 @@ def _select_model(provider: str, mode: str) -> str:
     if provider.lower() == "azure":
         return questionary.text(
             f"Enter Azure deployment name ({mode}-thinking):",
-            validate=lambda x: len(x.strip()) > 0 or "Please enter a deployment name.",
+            validate=lambda x: len(
+                x.strip()) > 0 or "Please enter a deployment name.",
         ).ask().strip()
 
     choice = questionary.select(
@@ -210,7 +215,8 @@ def _select_model(provider: str, mode: str) -> str:
     ).ask()
 
     if choice is None:
-        console.print(f"\n[red]No {mode} thinking llm engine selected. Exiting...[/red]")
+        console.print(
+            f"\n[red]No {mode} thinking llm engine selected. Exiting...[/red]")
         exit(1)
 
     if choice == "custom":
@@ -228,6 +234,7 @@ def select_deep_thinking_agent(provider) -> str:
     """Select deep thinking llm engine using an interactive selection."""
     return _select_model(provider, "deep")
 
+
 def select_llm_provider() -> tuple[str, str | None]:
     """Select the LLM provider and its API endpoint."""
     # (display_name, provider_key, base_url)
@@ -242,6 +249,8 @@ def select_llm_provider() -> tuple[str, str | None]:
         ("OpenRouter", "openrouter", "https://openrouter.ai/api/v1"),
         ("Azure OpenAI", "azure", None),
         ("Ollama", "ollama", "http://localhost:11434/v1"),
+        ("LMStudio", "lmstudio", "http://127.0.0.1:1234/v1"),
+        ("FPTCloud", "fptcloud", "https://mkp-api.fptcloud.com/v1"),
     ]
 
     choice = questionary.select(
@@ -259,7 +268,7 @@ def select_llm_provider() -> tuple[str, str | None]:
             ]
         ),
     ).ask()
-    
+
     if choice is None:
         console.print("\n[red]No LLM provider selected. Exiting...[/red]")
         exit(1)
@@ -331,6 +340,7 @@ def ask_output_language() -> str:
     choice = questionary.select(
         "Select Output Language:",
         choices=[
+            questionary.Choice("Vietnamese (Tiếng Việt)", "Vietnamese"),
             questionary.Choice("English (default)", "English"),
             questionary.Choice("Chinese (中文)", "Chinese"),
             questionary.Choice("Japanese (日本語)", "Japanese"),
@@ -354,7 +364,8 @@ def ask_output_language() -> str:
     if choice == "custom":
         return questionary.text(
             "Enter language name (e.g. Turkish, Vietnamese, Thai, Indonesian):",
-            validate=lambda x: len(x.strip()) > 0 or "Please enter a language name.",
+            validate=lambda x: len(
+                x.strip()) > 0 or "Please enter a language name.",
         ).ask().strip()
 
     return choice

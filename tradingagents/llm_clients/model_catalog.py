@@ -25,14 +25,16 @@ MODEL_OPTIONS: ProviderModeOptions = {
     },
     "anthropic": {
         "quick": [
-            ("Claude Sonnet 4.6 - Best speed and intelligence balance", "claude-sonnet-4-6"),
+            ("Claude Sonnet 4.6 - Best speed and intelligence balance",
+             "claude-sonnet-4-6"),
             ("Claude Haiku 4.5 - Fast, near-instant responses", "claude-haiku-4-5"),
             ("Claude Sonnet 4.5 - Agents and coding", "claude-sonnet-4-5"),
         ],
         "deep": [
             ("Claude Opus 4.6 - Most intelligent, agents and coding", "claude-opus-4-6"),
             ("Claude Opus 4.5 - Premium, max intelligence", "claude-opus-4-5"),
-            ("Claude Sonnet 4.6 - Best speed and intelligence balance", "claude-sonnet-4-6"),
+            ("Claude Sonnet 4.6 - Best speed and intelligence balance",
+             "claude-sonnet-4-6"),
             ("Claude Sonnet 4.5 - Agents and coding", "claude-sonnet-4-5"),
         ],
     },
@@ -40,11 +42,13 @@ MODEL_OPTIONS: ProviderModeOptions = {
         "quick": [
             ("Gemini 3 Flash - Next-gen fast", "gemini-3-flash-preview"),
             ("Gemini 2.5 Flash - Balanced, stable", "gemini-2.5-flash"),
-            ("Gemini 3.1 Flash Lite - Most cost-efficient", "gemini-3.1-flash-lite-preview"),
+            ("Gemini 3.1 Flash Lite - Most cost-efficient",
+             "gemini-3.1-flash-lite-preview"),
             ("Gemini 2.5 Flash Lite - Fast, low-cost", "gemini-2.5-flash-lite"),
         ],
         "deep": [
-            ("Gemini 3.1 Pro - Reasoning-first, complex workflows", "gemini-3.1-pro-preview"),
+            ("Gemini 3.1 Pro - Reasoning-first, complex workflows",
+             "gemini-3.1-pro-preview"),
             ("Gemini 3 Flash - Next-gen fast", "gemini-3-flash-preview"),
             ("Gemini 2.5 Pro - Stable pro model", "gemini-2.5-pro"),
             ("Gemini 2.5 Flash - Balanced, stable", "gemini-2.5-flash"),
@@ -52,15 +56,20 @@ MODEL_OPTIONS: ProviderModeOptions = {
     },
     "xai": {
         "quick": [
-            ("Grok 4.1 Fast (Non-Reasoning) - Speed optimized, 2M ctx", "grok-4-1-fast-non-reasoning"),
-            ("Grok 4 Fast (Non-Reasoning) - Speed optimized", "grok-4-fast-non-reasoning"),
-            ("Grok 4.1 Fast (Reasoning) - High-performance, 2M ctx", "grok-4-1-fast-reasoning"),
+            ("Grok 4.1 Fast (Non-Reasoning) - Speed optimized, 2M ctx",
+             "grok-4-1-fast-non-reasoning"),
+            ("Grok 4 Fast (Non-Reasoning) - Speed optimized",
+             "grok-4-fast-non-reasoning"),
+            ("Grok 4.1 Fast (Reasoning) - High-performance, 2M ctx",
+             "grok-4-1-fast-reasoning"),
         ],
         "deep": [
             ("Grok 4 - Flagship model", "grok-4-0709"),
-            ("Grok 4.1 Fast (Reasoning) - High-performance, 2M ctx", "grok-4-1-fast-reasoning"),
+            ("Grok 4.1 Fast (Reasoning) - High-performance, 2M ctx",
+             "grok-4-1-fast-reasoning"),
             ("Grok 4 Fast (Reasoning) - High-performance", "grok-4-fast-reasoning"),
-            ("Grok 4.1 Fast (Non-Reasoning) - Speed optimized, 2M ctx", "grok-4-1-fast-non-reasoning"),
+            ("Grok 4.1 Fast (Non-Reasoning) - Speed optimized, 2M ctx",
+             "grok-4-1-fast-non-reasoning"),
         ],
     },
     "deepseek": {
@@ -105,13 +114,34 @@ MODEL_OPTIONS: ProviderModeOptions = {
             ("Qwen3:latest (8B, local)", "qwen3:latest"),
             ("GPT-OSS:latest (20B, local)", "gpt-oss:latest"),
             ("GLM-4.7-Flash:latest (30B, local)", "glm-4.7-flash:latest"),
+            ("GPT-OSS (120B, cloud)", "gpt-oss:120b-cloud"),
+            ("Gemma 4 (31B, cloud)", "gemma4:31b-cloud"),
         ],
         "deep": [
             ("GLM-4.7-Flash:latest (30B, local)", "glm-4.7-flash:latest"),
             ("GPT-OSS:latest (20B, local)", "gpt-oss:latest"),
             ("Qwen3:latest (8B, local)", "qwen3:latest"),
+            ("GPT-OSS (120B, cloud)", "gpt-oss:120b-cloud"),
+            ("Gemma 4 (31B, cloud)", "gemma4:31b-cloud"),
         ],
     },
+    "lmstudio": {
+        "quick": [
+            ("GPT-OSS (20B, local)", "openai/gpt-oss-20b"),
+        ],
+        "deep": [
+            ("GPT-OSS (20B, local)", "openai/gpt-oss-20b"),
+        ],
+    },
+    "fptcloud": {
+        "quick": [
+            ("GPT-OSS (120B, cloud)", "gpt-oss-120b"),
+        ],
+        "deep": [
+            ("GPT-OSS (120B, cloud)", "gpt-oss-120b"),
+        ],
+    },
+
 }
 
 
