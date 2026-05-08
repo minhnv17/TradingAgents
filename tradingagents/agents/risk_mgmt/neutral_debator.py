@@ -1,5 +1,7 @@
 
 
+from tradingagents.agents.utils.agent_utils import get_language_instruction
+
 def create_neutral_debator(llm):
     def neutral_node(state) -> dict:
         risk_debate_state = state["risk_debate_state"]
@@ -16,19 +18,24 @@ def create_neutral_debator(llm):
 
         trader_decision = state["trader_investment_plan"]
 
-        prompt = f"""As the Neutral Risk Analyst, your role is to provide a balanced perspective, weighing both the potential benefits and risks of the trader's decision or plan. You prioritize a well-rounded approach, evaluating the upsides and downsides while factoring in broader market trends, potential economic shifts, and diversification strategies.Here is the trader's decision:
+        prompt = f"""Bạn là **Neutral Risk Analyst**: nhiệm vụ là đưa góc nhìn cân bằng, cân đối lợi ích và rủi ro của đề xuất Trader. Bạn đánh giá cả upside lẫn downside, cân nhắc xu hướng thị trường rộng hơn, thay đổi vĩ mô có thể xảy ra và chiến lược đa dạng hoá.{get_language_instruction()}
+
+Đây là đề xuất của Trader:
 
 {trader_decision}
 
-Your task is to challenge both the Aggressive and Conservative Analysts, pointing out where each perspective may be overly optimistic or overly cautious. Use insights from the following data sources to support a moderate, sustainable strategy to adjust the trader's decision:
+Nhiệm vụ của bạn là thách thức cả Aggressive lẫn Conservative: chỉ ra chỗ mỗi bên quá lạc quan hoặc quá thận trọng. Dựa trên các nguồn sau để đề xuất một chiến lược “vừa phải” và bền vững hơn (nếu cần) nhằm điều chỉnh đề xuất Trader:
 
 Market Research Report: {market_research_report}
 Social Media Sentiment Report: {sentiment_report}
 Latest World Affairs Report: {news_report}
 Company Fundamentals Report: {fundamentals_report}
-Here is the current conversation history: {history} Here is the last response from the aggressive analyst: {current_aggressive_response} Here is the last response from the conservative analyst: {current_conservative_response}. If there are no responses from the other viewpoints yet, present your own argument based on the available data.
+Lịch sử tranh luận hiện tại: {history}
+Phản hồi gần nhất của Aggressive: {current_aggressive_response}
+Phản hồi gần nhất của Conservative: {current_conservative_response}
+Nếu chưa có phản hồi từ bên khác, hãy tự trình bày luận điểm của bạn dựa trên dữ liệu sẵn có.
 
-Engage actively by analyzing both sides critically, addressing weaknesses in the aggressive and conservative arguments to advocate for a more balanced approach. Challenge each of their points to illustrate why a moderate risk strategy might offer the best of both worlds, providing growth potential while safeguarding against extreme volatility. Focus on debating rather than simply presenting data, aiming to show that a balanced view can lead to the most reliable outcomes. Output conversationally as if you are speaking without any special formatting."""
+Yêu cầu: tranh luận, phản biện điểm yếu của cả hai bên; làm rõ vì sao chiến lược rủi ro vừa phải có thể “được cả hai” (có tăng trưởng nhưng tránh biến động cực đoan). Tập trung vào lập luận chứ không chỉ liệt kê dữ liệu. Trình bày dạng hội thoại tự nhiên, không cần định dạng đặc biệt."""
 
         response = llm.invoke(prompt)
 

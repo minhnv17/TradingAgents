@@ -1,5 +1,7 @@
 
 
+from tradingagents.agents.utils.agent_utils import get_language_instruction
+
 def create_conservative_debator(llm):
     def conservative_node(state) -> dict:
         risk_debate_state = state["risk_debate_state"]
@@ -16,19 +18,24 @@ def create_conservative_debator(llm):
 
         trader_decision = state["trader_investment_plan"]
 
-        prompt = f"""As the Conservative Risk Analyst, your primary objective is to protect assets, minimize volatility, and ensure steady, reliable growth. You prioritize stability, security, and risk mitigation, carefully assessing potential losses, economic downturns, and market volatility. When evaluating the trader's decision or plan, critically examine high-risk elements, pointing out where the decision may expose the firm to undue risk and where more cautious alternatives could secure long-term gains. Here is the trader's decision:
+        prompt = f"""Bạn là **Conservative Risk Analyst**: ưu tiên bảo toàn vốn, giảm biến động, và tăng trưởng ổn định. Khi đánh giá kế hoạch/đề xuất của Trader, hãy soi kỹ các yếu tố rủi ro cao: đâu là điểm có thể gây drawdown lớn, rủi ro vĩ mô/chính sách, rủi ro dòng tiền/đòn bẩy, và nơi mà phương án thận trọng hơn sẽ tốt cho lợi nhuận điều chỉnh theo rủi ro.{get_language_instruction()}
+
+Đây là đề xuất của Trader:
 
 {trader_decision}
 
-Your task is to actively counter the arguments of the Aggressive and Neutral Analysts, highlighting where their views may overlook potential threats or fail to prioritize sustainability. Respond directly to their points, drawing from the following data sources to build a convincing case for a low-risk approach adjustment to the trader's decision:
+Nhiệm vụ của bạn là phản biện Aggressive và Neutral: chỉ ra chỗ họ bỏ qua rủi ro, hoặc đánh đổi an toàn quá nhiều để lấy upside. Trả lời trực tiếp từng ý, dựa trên các nguồn sau để đề xuất điều chỉnh theo hướng rủi ro thấp:
 
 Market Research Report: {market_research_report}
 Social Media Sentiment Report: {sentiment_report}
 Latest World Affairs Report: {news_report}
 Company Fundamentals Report: {fundamentals_report}
-Here is the current conversation history: {history} Here is the last response from the aggressive analyst: {current_aggressive_response} Here is the last response from the neutral analyst: {current_neutral_response}. If there are no responses from the other viewpoints yet, present your own argument based on the available data.
+Lịch sử tranh luận hiện tại: {history}
+Phản hồi gần nhất của Aggressive: {current_aggressive_response}
+Phản hồi gần nhất của Neutral: {current_neutral_response}
+Nếu chưa có phản hồi từ bên khác, hãy tự trình bày luận điểm của bạn dựa trên dữ liệu sẵn có.
 
-Engage by questioning their optimism and emphasizing the potential downsides they may have overlooked. Address each of their counterpoints to showcase why a conservative stance is ultimately the safest path for the firm's assets. Focus on debating and critiquing their arguments to demonstrate the strength of a low-risk strategy over their approaches. Output conversationally as if you are speaking without any special formatting."""
+Yêu cầu: tranh luận và chất vấn trực tiếp; nhấn mạnh downside mà họ bỏ qua; kết luận rõ vì sao cách tiếp cận bảo thủ là con đường an toàn nhất cho tài sản của “firm”. Trình bày dạng hội thoại tự nhiên, không cần định dạng đặc biệt."""
 
         response = llm.invoke(prompt)
 

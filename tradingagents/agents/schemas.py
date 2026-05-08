@@ -23,6 +23,21 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from tradingagents.localization import get_language_code, get_rating_translation
+from tradingagents.dataflows.config import get_config
+
+
+# ---------------------------------------------------------------------------
+# Helper for localized rendering
+# ---------------------------------------------------------------------------
+
+
+def _get_localized_rating(value: str) -> str:
+    """Get localized rating value based on config."""
+    config = get_config()
+    language = config.get("output_language", "English")
+    return get_rating_translation(value, language)
+
 
 # ---------------------------------------------------------------------------
 # Shared rating types
@@ -92,13 +107,38 @@ class ResearchPlan(BaseModel):
 
 def render_research_plan(plan: ResearchPlan) -> str:
     """Render a ResearchPlan to markdown for storage and the trader's prompt context."""
-    return "\n".join([
-        f"**Recommendation**: {plan.recommendation.value}",
-        "",
-        f"**Rationale**: {plan.rationale}",
-        "",
-        f"**Strategic Actions**: {plan.strategic_actions}",
-    ])
+    localized_rating = _get_localized_rating(plan.recommendation.value)
+    config = get_config()
+    language = config.get("output_language", "English")
+    lang_code = get_language_code(language)
+
+    labels = {
+        "en": {
+            "recommendation": "Recommendation",
+            "rationale": "Rationale",
+            "strategic_actions": "Strategic Actions",
+            "final_proposal": "FINAL TRANSACTION PROPOSAL",
+        },
+        "vi": {
+            "recommendation": "Khuyến nghị",
+            "rationale": "Lý do",
+            "strategic_actions": "Hành động chiến lược",
+            "final_proposal": "ĐỀ XUẤT GIAO DỊCH CUỐI CÙNG",
+        },
+    }
+    lbl = labels.get(lang_code, labels["en"])
+
+    return "\n".join(
+        [
+            f"**{lbl['recommendation']}**: {localized_rating}",
+            "",
+            f"**{lbl['rationale']}**: {plan.rationale}",
+            "",
+            f"**{lbl['strategic_actions']}**: {plan.strategic_actions}",
+            "",
+            f"{lbl['final_proposal']}: **{localized_rating.upper()}**",
+        ]
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -145,21 +185,48 @@ def render_trader_proposal(proposal: TraderProposal) -> str:
     preserved for backward compatibility with the analyst stop-signal text
     and any external code that greps for it.
     """
+    localized_action = _get_localized_rating(proposal.action.value)
+    config = get_config()
+    language = config.get("output_language", "English")
+    lang_code = get_language_code(language)
+
+    labels = {
+        "en": {
+            "action": "Action",
+            "reasoning": "Reasoning",
+            "entry_price": "Entry Price",
+            "stop_loss": "Stop Loss",
+            "position_sizing": "Position Sizing",
+            "final_proposal": "FINAL TRANSACTION PROPOSAL",
+        },
+        "vi": {
+            "action": "Hành động",
+            "reasoning": "Lý do",
+            "entry_price": "Giá vào lệnh",
+            "stop_loss": "Dừng lỗ",
+            "position_sizing": "Kích thước vị thế",
+            "final_proposal": "ĐỀ XUẤT GIAO DỊCH CUỐI CÙNG",
+        },
+    }
+    lbl = labels.get(lang_code, labels["en"])
+
     parts = [
-        f"**Action**: {proposal.action.value}",
+        f"**{lbl['action']}**: {localized_action}",
         "",
-        f"**Reasoning**: {proposal.reasoning}",
+        f"**{lbl['reasoning']}**: {proposal.reasoning}",
     ]
     if proposal.entry_price is not None:
-        parts.extend(["", f"**Entry Price**: {proposal.entry_price}"])
+        parts.extend(["", f"**{lbl['entry_price']}**: {proposal.entry_price}"])
     if proposal.stop_loss is not None:
-        parts.extend(["", f"**Stop Loss**: {proposal.stop_loss}"])
+        parts.extend(["", f"**{lbl['stop_loss']}**: {proposal.stop_loss}"])
     if proposal.position_sizing:
-        parts.extend(["", f"**Position Sizing**: {proposal.position_sizing}"])
-    parts.extend([
-        "",
-        f"FINAL TRANSACTION PROPOSAL: **{proposal.action.value.upper()}**",
-    ])
+        parts.extend(["", f"**{lbl['position_sizing']}**: {proposal.position_sizing}"])
+    parts.extend(
+        [
+            "",
+            f"{lbl['final_proposal']}: **{localized_action.upper()}**",
+        ]
+    )
     return "\n".join(parts)
 
 
@@ -214,15 +281,38 @@ def render_pm_decision(decision: PortfolioDecision) -> str:
     ``**Executive Summary**``, ``**Investment Thesis**``) that downstream
     parsers and the report writers already handle.
     """
+    localized_rating = _get_localized_rating(decision.rating.value)
+    config = get_config()
+    language = config.get("output_language", "English")
+    lang_code = get_language_code(language)
+
+    labels = {
+        "en": {
+            "rating": "Rating",
+            "executive_summary": "Executive Summary",
+            "investment_thesis": "Investment Thesis",
+            "price_target": "Price Target",
+            "time_horizon": "Time Horizon",
+        },
+        "vi": {
+            "rating": "Xếp hạng",
+            "executive_summary": "Tóm tắt điều hành",
+            "investment_thesis": "Luận điểm đầu tư",
+            "price_target": "Giá mục tiêu",
+            "time_horizon": "Khung thời gian",
+        },
+    }
+    lbl = labels.get(lang_code, labels["en"])
+
     parts = [
-        f"**Rating**: {decision.rating.value}",
+        f"**{lbl['rating']}**: {localized_rating}",
         "",
-        f"**Executive Summary**: {decision.executive_summary}",
+        f"**{lbl['executive_summary']}**: {decision.executive_summary}",
         "",
-        f"**Investment Thesis**: {decision.investment_thesis}",
+        f"**{lbl['investment_thesis']}**: {decision.investment_thesis}",
     ]
     if decision.price_target is not None:
-        parts.extend(["", f"**Price Target**: {decision.price_target}"])
+        parts.extend(["", f"**{lbl['price_target']}**: {decision.price_target}"])
     if decision.time_horizon:
-        parts.extend(["", f"**Time Horizon**: {decision.time_horizon}"])
+        parts.extend(["", f"**{lbl['time_horizon']}**: {decision.time_horizon}"])
     return "\n".join(parts)

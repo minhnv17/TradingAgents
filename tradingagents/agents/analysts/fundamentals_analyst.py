@@ -9,6 +9,7 @@ from tradingagents.agents.utils.agent_utils import (
     get_language_instruction,
 )
 from tradingagents.dataflows.config import get_config
+from tradingagents.localization import get_agent_wrapper_message
 
 
 def create_fundamentals_analyst(llm):
@@ -23,25 +24,25 @@ def create_fundamentals_analyst(llm):
             get_income_statement,
         ]
 
+        config = get_config()
+        output_language = config.get("output_language", "English")
+        agent_wrapper = get_agent_wrapper_message(output_language)
+
         system_message = (
-            "You are a researcher tasked with analyzing fundamental information over the past week about a company. Please write a comprehensive report of the company's fundamental information such as financial documents, company profile, basic company financials, and company financial history to gain a full view of the company's fundamental information to inform traders. Make sure to include as much detail as possible. Provide specific, actionable insights with supporting evidence to help traders make informed decisions."
-            + " Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."
-            + " Use the available tools: `get_fundamentals` for comprehensive company analysis, `get_balance_sheet`, `get_cashflow`, and `get_income_statement` for specific financial statements."
-            + get_language_instruction(),
+            "Bạn là một nhà nghiên cứu phân tích cơ bản (fundamental) cho giao dịch, nhiệm vụ là phân tích thông tin cơ bản của công ty trong 1 tuần gần đây."
+            " Hãy viết một báo cáo đầy đủ về: hồ sơ công ty, các chỉ số tài chính cơ bản, lịch sử tài chính, và các điểm mạnh/yếu quan trọng"
+            " để giúp trader ra quyết định."
+            " Nêu nhận định cụ thể, có dẫn chứng từ dữ liệu, và chỉ ra tác động lên rủi ro/lợi nhuận kỳ vọng."
+            + " Dùng các công cụ có sẵn: `get_fundamentals` (tổng quan), `get_balance_sheet` (BCĐKT), `get_cashflow` (LCTT), `get_income_statement` (KQKD)."
+            + " BẮT BUỘC thêm một bảng Markdown ở cuối báo cáo để tóm tắt các ý chính (rõ ràng, dễ đọc)."
+            + get_language_instruction()
         )
 
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
-                    "You are a helpful AI assistant, collaborating with other assistants."
-                    " Use the provided tools to progress towards answering the question."
-                    " If you are unable to fully answer, that's OK; another assistant with different tools"
-                    " will help where you left off. Execute what you can to make progress."
-                    " If you or any other assistant has the FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** or deliverable,"
-                    " prefix your response with FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** so the team knows to stop."
-                    " You have access to the following tools: {tool_names}.\n{system_message}"
-                    "For your reference, the current date is {current_date}. {instrument_context}",
+                    agent_wrapper,
                 ),
                 MessagesPlaceholder(variable_name="messages"),
             ]

@@ -1,4 +1,4 @@
-
+from tradingagents.agents.utils.agent_utils import get_language_instruction
 
 def create_bear_researcher(llm):
     def bear_node(state) -> dict:
@@ -12,25 +12,24 @@ def create_bear_researcher(llm):
         news_report = state["news_report"]
         fundamentals_report = state["fundamentals_report"]
 
-        prompt = f"""You are a Bear Analyst making the case against investing in the stock. Your goal is to present a well-reasoned argument emphasizing risks, challenges, and negative indicators. Leverage the provided research and data to highlight potential downsides and counter bullish arguments effectively.
+        prompt = f"""Bạn là nhà phân tích theo hướng “Bear” (phản đối đầu tư vào cổ phiếu). Mục tiêu là trình bày một luận điểm chặt chẽ, nhấn mạnh rủi ro, thách thức và các tín hiệu tiêu cực có thể khiến hiệu suất cổ phiếu kém.{get_language_instruction()}
 
-Key points to focus on:
+Yêu cầu nội dung:
+- **Rủi ro & thách thức**: bão hoà thị trường, chu kỳ ngành, cấu trúc nợ, dòng tiền, rủi ro pháp lý/chính sách, rủi ro vĩ mô, v.v.
+- **Điểm yếu cạnh tranh**: vị thế yếu hơn đối thủ, mất lợi thế chi phí, suy giảm đổi mới, rào cản gia nhập thấp, v.v.
+- **Tín hiệu tiêu cực**: dữ liệu tài chính xấu đi, xu hướng thị trường bất lợi, tin tức tiêu cực, rủi ro sự kiện.
+- **Phản biện Bull**: bắt lỗi các giả định quá lạc quan của Bull bằng dữ liệu/chi tiết cụ thể; chỉ ra “điểm mù” trong luận cứ.
+- **Cách trình bày**: tranh luận đối thoại trực tiếp, phản hồi các ý của Bull (không chỉ liệt kê).
 
-- Risks and Challenges: Highlight factors like market saturation, financial instability, or macroeconomic threats that could hinder the stock's performance.
-- Competitive Weaknesses: Emphasize vulnerabilities such as weaker market positioning, declining innovation, or threats from competitors.
-- Negative Indicators: Use evidence from financial data, market trends, or recent adverse news to support your position.
-- Bull Counterpoints: Critically analyze the bull argument with specific data and sound reasoning, exposing weaknesses or over-optimistic assumptions.
-- Engagement: Present your argument in a conversational style, directly engaging with the bull analyst's points and debating effectively rather than simply listing facts.
+Tài nguyên có sẵn:
+- Market research report: {market_research_report}
+- Social media sentiment report: {sentiment_report}
+- Latest world affairs news: {news_report}
+- Company fundamentals report: {fundamentals_report}
+- Lịch sử tranh luận: {history}
+- Luận điểm Bull gần nhất: {current_response}
 
-Resources available:
-
-Market research report: {market_research_report}
-Social media sentiment report: {sentiment_report}
-Latest world affairs news: {news_report}
-Company fundamentals report: {fundamentals_report}
-Conversation history of the debate: {history}
-Last bull argument: {current_response}
-Use this information to deliver a compelling bear argument, refute the bull's claims, and engage in a dynamic debate that demonstrates the risks and weaknesses of investing in the stock.
+Hãy dùng các tài nguyên trên để đưa ra lập luận Bear, phản biện Bull, và làm rõ vì sao rủi ro/nhược điểm đang áp đảo cơ hội.
 """
 
         response = llm.invoke(prompt)

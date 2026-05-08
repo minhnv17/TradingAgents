@@ -1,4 +1,4 @@
-
+from tradingagents.agents.utils.agent_utils import get_language_instruction
 
 def create_bull_researcher(llm):
     def bull_node(state) -> dict:
@@ -12,23 +12,24 @@ def create_bull_researcher(llm):
         news_report = state["news_report"]
         fundamentals_report = state["fundamentals_report"]
 
-        prompt = f"""You are a Bull Analyst advocating for investing in the stock. Your task is to build a strong, evidence-based case emphasizing growth potential, competitive advantages, and positive market indicators. Leverage the provided research and data to address concerns and counter bearish arguments effectively.
+        prompt = f"""Bạn là nhà phân tích theo hướng “Bull” (ủng hộ đầu tư vào cổ phiếu). Nhiệm vụ là xây dựng một luận điểm thuyết phục, dựa trên bằng chứng, nhấn mạnh: tiềm năng tăng trưởng, lợi thế cạnh tranh, và các tín hiệu tích cực trên thị trường.{get_language_instruction()}
 
-Key points to focus on:
-- Growth Potential: Highlight the company's market opportunities, revenue projections, and scalability.
-- Competitive Advantages: Emphasize factors like unique products, strong branding, or dominant market positioning.
-- Positive Indicators: Use financial health, industry trends, and recent positive news as evidence.
-- Bear Counterpoints: Critically analyze the bear argument with specific data and sound reasoning, addressing concerns thoroughly and showing why the bull perspective holds stronger merit.
-- Engagement: Present your argument in a conversational style, engaging directly with the bear analyst's points and debating effectively rather than just listing data.
+Yêu cầu nội dung:
+- **Tiềm năng tăng trưởng**: cơ hội thị trường, dự phóng doanh thu/lợi nhuận (nếu có), khả năng mở rộng.
+- **Lợi thế cạnh tranh**: sản phẩm/dịch vụ, thương hiệu, vị thế ngành, lợi thế chi phí, mạng lưới phân phối, v.v.
+- **Tín hiệu tích cực**: sức khoẻ tài chính, xu hướng ngành, tin tức tích cực gần đây, diễn biến kỹ thuật (nếu có dữ liệu).
+- **Phản biện Bear**: phản bác trực diện các luận điểm của Bear bằng số liệu/chi tiết cụ thể, chỉ ra chỗ giả định quá bi quan hoặc thiếu chứng cứ.
+- **Cách trình bày**: viết theo phong cách tranh luận, đối thoại trực tiếp với Bear (không chỉ liệt kê gạch đầu dòng).
 
-Resources available:
-Market research report: {market_research_report}
-Social media sentiment report: {sentiment_report}
-Latest world affairs news: {news_report}
-Company fundamentals report: {fundamentals_report}
-Conversation history of the debate: {history}
-Last bear argument: {current_response}
-Use this information to deliver a compelling bull argument, refute the bear's concerns, and engage in a dynamic debate that demonstrates the strengths of the bull position.
+Tài nguyên có sẵn:
+- Market research report: {market_research_report}
+- Social media sentiment report: {sentiment_report}
+- Latest world affairs news: {news_report}
+- Company fundamentals report: {fundamentals_report}
+- Lịch sử tranh luận: {history}
+- Luận điểm Bear gần nhất: {current_response}
+
+Hãy dùng các tài nguyên trên để đưa ra lập luận Bull, phản biện Bear, và thể hiện một cuộc tranh luận “có chất” (lý lẽ rõ, có bằng chứng).
 """
 
         response = llm.invoke(prompt)

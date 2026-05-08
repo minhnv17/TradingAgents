@@ -6,6 +6,7 @@ from tradingagents.agents.utils.agent_utils import (
     get_stock_data,
 )
 from tradingagents.dataflows.config import get_config
+from tradingagents.localization import get_agent_wrapper_message
 
 
 def create_market_analyst(llm):
@@ -19,8 +20,15 @@ def create_market_analyst(llm):
             get_indicators,
         ]
 
+        config = get_config()
+        output_language = config.get("output_language", "English")
+        agent_wrapper = get_agent_wrapper_message(output_language)
+
         system_message = (
-            """You are a trading assistant tasked with analyzing financial markets. Your role is to select the **most relevant indicators** for a given market condition or trading strategy from the following list. The goal is to choose up to **8 indicators** that provide complementary insights without redundancy. Categories and each category's indicators are:
+            """Bạn là trợ lý giao dịch phụ trách phân tích thị trường. Nhiệm vụ của bạn là chọn các **chỉ báo kỹ thuật phù hợp nhất**
+cho bối cảnh thị trường/chiến lược giao dịch, từ danh sách dưới đây. Mục tiêu là chọn tối đa **8 chỉ báo** bổ trợ nhau, tránh trùng lặp.
+
+Danh mục và chỉ báo:
 
 Moving Averages:
 - close_50_sma: 50 SMA: A medium-term trend indicator. Usage: Identify trend direction and serve as dynamic support/resistance. Tips: It lags price; combine with faster indicators for timely signals.
@@ -44,8 +52,12 @@ Volatility Indicators:
 Volume-Based Indicators:
 - vwma: VWMA: A moving average weighted by volume. Usage: Confirm trends by integrating price action with volume data. Tips: Watch for skewed results from volume spikes; use in combination with other volume analyses.
 
-- Select indicators that provide diverse and complementary information. Avoid redundancy (e.g., do not select both rsi and stochrsi). Also briefly explain why they are suitable for the given market context. When you tool call, please use the exact name of the indicators provided above as they are defined parameters, otherwise your call will fail. Please make sure to call get_stock_data first to retrieve the CSV that is needed to generate indicators. Then use get_indicators with the specific indicator names. Write a very detailed and nuanced report of the trends you observe. Provide specific, actionable insights with supporting evidence to help traders make informed decisions."""
-            + """ Make sure to append a Markdown table at the end of the report to organize key points in the report, organized and easy to read."""
+Hướng dẫn bắt buộc:
+- Chọn các chỉ báo đa dạng và bổ trợ nhau. Tránh trùng lặp (ví dụ: không chọn cả `rsi` và `stochrsi`).
+- Khi gọi tool, **phải dùng đúng tên chỉ báo** như liệt kê ở trên (sai tên sẽ fail).
+- **Bắt buộc** gọi `get_stock_data` trước để lấy CSV đầu vào, sau đó gọi `get_indicators` với đúng tên chỉ báo đã chọn.
+- Viết báo cáo rất chi tiết về xu hướng bạn quan sát được, có số liệu/điểm dữ liệu làm bằng chứng, và chuyển hoá thành gợi ý hành động cho trader."""
+            + " BẮT BUỘC thêm một bảng Markdown ở cuối báo cáo để tóm tắt các ý chính (rõ ràng, dễ đọc)."
             + get_language_instruction()
         )
 
@@ -53,14 +65,7 @@ Volume-Based Indicators:
             [
                 (
                     "system",
-                    "You are a helpful AI assistant, collaborating with other assistants."
-                    " Use the provided tools to progress towards answering the question."
-                    " If you are unable to fully answer, that's OK; another assistant with different tools"
-                    " will help where you left off. Execute what you can to make progress."
-                    " If you or any other assistant has the FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** or deliverable,"
-                    " prefix your response with FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL** so the team knows to stop."
-                    " You have access to the following tools: {tool_names}.\n{system_message}"
-                    "For your reference, the current date is {current_date}. {instrument_context}",
+                    agent_wrapper,
                 ),
                 MessagesPlaceholder(variable_name="messages"),
             ]

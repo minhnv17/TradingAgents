@@ -1,5 +1,7 @@
 
 
+from tradingagents.agents.utils.agent_utils import get_language_instruction
+
 def create_aggressive_debator(llm):
     def aggressive_node(state) -> dict:
         risk_debate_state = state["risk_debate_state"]
@@ -16,19 +18,24 @@ def create_aggressive_debator(llm):
 
         trader_decision = state["trader_investment_plan"]
 
-        prompt = f"""As the Aggressive Risk Analyst, your role is to actively champion high-reward, high-risk opportunities, emphasizing bold strategies and competitive advantages. When evaluating the trader's decision or plan, focus intently on the potential upside, growth potential, and innovative benefits—even when these come with elevated risk. Use the provided market data and sentiment analysis to strengthen your arguments and challenge the opposing views. Specifically, respond directly to each point made by the conservative and neutral analysts, countering with data-driven rebuttals and persuasive reasoning. Highlight where their caution might miss critical opportunities or where their assumptions may be overly conservative. Here is the trader's decision:
+        prompt = f"""Bạn là **Aggressive Risk Analyst**: ưu tiên cơ hội lợi nhuận cao, chấp nhận rủi ro cao khi phần thưởng xứng đáng. Khi đánh giá kế hoạch/đề xuất của Trader, hãy tập trung vào upside, động lực tăng trưởng, và các lợi thế/catalyst—even nếu rủi ro cao. Dùng dữ liệu thị trường và sentiment để củng cố luận điểm và phản biện các quan điểm đối lập. Hãy trả lời trực tiếp từng ý của Conservative và Neutral, dùng phản biện có số liệu/logic thuyết phục và chỉ ra chỗ họ quá thận trọng, bỏ lỡ cơ hội.{get_language_instruction()}
+
+Đây là đề xuất của Trader:
 
 {trader_decision}
 
-Your task is to create a compelling case for the trader's decision by questioning and critiquing the conservative and neutral stances to demonstrate why your high-reward perspective offers the best path forward. Incorporate insights from the following sources into your arguments:
+Nhiệm vụ của bạn là bảo vệ (hoặc điều chỉnh theo hướng “mạnh tay hơn”) đề xuất của Trader bằng cách chất vấn/đánh vào điểm yếu của quan điểm Conservative và Neutral. Hãy kết hợp các nguồn sau:
 
 Market Research Report: {market_research_report}
 Social Media Sentiment Report: {sentiment_report}
 Latest World Affairs Report: {news_report}
 Company Fundamentals Report: {fundamentals_report}
-Here is the current conversation history: {history} Here are the last arguments from the conservative analyst: {current_conservative_response} Here are the last arguments from the neutral analyst: {current_neutral_response}. If there are no responses from the other viewpoints yet, present your own argument based on the available data.
+Lịch sử tranh luận hiện tại: {history}
+Lập luận gần nhất của Conservative: {current_conservative_response}
+Lập luận gần nhất của Neutral: {current_neutral_response}
+Nếu chưa có phản hồi từ bên khác, hãy tự trình bày luận điểm của bạn dựa trên dữ liệu sẵn có.
 
-Engage actively by addressing any specific concerns raised, refuting the weaknesses in their logic, and asserting the benefits of risk-taking to outpace market norms. Maintain a focus on debating and persuading, not just presenting data. Challenge each counterpoint to underscore why a high-risk approach is optimal. Output conversationally as if you are speaking without any special formatting."""
+Yêu cầu: tranh luận và thuyết phục (không chỉ liệt kê số liệu). Hãy phản biện từng counterpoint để làm rõ vì sao cách tiếp cận “risk-on” là tối ưu trong bối cảnh này. Trình bày dạng hội thoại tự nhiên, không cần định dạng đặc biệt."""
 
         response = llm.invoke(prompt)
 

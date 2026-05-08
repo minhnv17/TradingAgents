@@ -138,9 +138,11 @@ MODEL_OPTIONS: ProviderModeOptions = {
     "fptcloud": {
         "quick": [
             ("GPT-OSS (120B, cloud)", "gpt-oss-120b"),
+            ("GLM-4.7 (cloud)", "GLM-4.7"),
         ],
         "deep": [
             ("GPT-OSS (120B, cloud)", "gpt-oss-120b"),
+            ("GLM-4.7 (cloud)", "GLM-4.7"),
         ],
     },
 
